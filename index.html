@@ -508,30 +508,29 @@ html.js [data-stagger].is-in>*{opacity:1;transform:none}
      EDIT THIS BLOCK EACH WEEK
      ================================================================ -->
 <script>
-const LAB={name:"Ikeuchi Lab",series:"Lunch Science Discussion",short:"LSD",language:"English"};
+const LAB = { name: "Ikeuchi Lab", series: "Lunch Science Discussion", short: "LSD", language: "English" };
 
-const SEMINAR={
-  title:"Organoid Intelligence: When Brain Cells Learn to Compute",
-  hook:"Can a dish of neurons outsmart silicon—and what would that even mean?",
-  start:"2026-10-16T03:00:00Z",
-  duration:45,
-  location:"IIS Room 302, Komaba Campus, UTokyo",
-  topic:"How do you train a biological neural network to respond to feedback signals? This session unpacks the emerging field of organoid intelligence — where brain organoids in a dish are shaped by their computational environment.\n\nRecent work has shown that cortical organoids can exhibit spontaneous learning-like dynamics when given closed-loop stimulation. We will ask what 'learning' means for a system without a body or a history, and what this implies for our own work in midbrain and striatal electrophysiology.",
-  takeaways:[
-    {num:"01",icon:"i-electrode",text:"Biological neurons in a dish can be trained with real-time closed-loop feedback"},
-    {num:"02",icon:"i-brain",    text:"Organoid intelligence is roughly a million times more energy-efficient than silicon AI"},
-    {num:"03",icon:"i-synapse",  text:"Open questions remain: what does 'learning' mean for a system without a body or history?"}
+const SEMINAR = {
+  title: "Introduction to human brain development",
+  hook: "Where do the regions of the brain come from? What is ventral/dorsal, anterior/posterior?",
+  start: "2026-10-16T03:45:00Z",   // 12:00 JST = 03:00 UTC
+  duration: 45,                     // minutes
+  location: "As Room 302, IIS",
+  topic: "How does the human bran develop and what are the major factors driving this?",
+  takeaways: [
+    { num: "01", icon: "i-electrode", text: "Embryonic development of brain vesicles" },
+    { num: "02", icon: "i-brain",     text: "Standard axes of anatomical direction" },
+    { num: "03", icon: "i-synapse",   text: "Open questions remain: what is 'conciousness' and when does it appear?" }
   ],
-  speaker:{name:"Dr. Yuki Hashimoto",role:"Assistant Professor",affiliation:"Ikeuchi Lab, IIS, University of Tokyo",bio:"Researcher in neural engineering and brain-computer interfaces, specialising in living neural systems and computational hardware co-design.",photo:""},
-  faq:[
-    {q:"Who can attend?",a:"Anyone in Ikeuchi Lab — professors, graduate students, research students, and postdocs. No registration required."},
-    {q:"Do I need to prepare anything?",a:"Nothing. Come with curiosity and your lunch."},
-    {q:"Can I sign up to present?",a:"Yes — contact a lab member or email directly to get on the schedule."},
-    {q:"What language is it in?",a:"English, so every lab member can participate."},
-    {q:"How do I get into the room?",a:"Room 302 is open during the session. Ask any lab member if the door is locked."}
+  speaker: { name: "Gonzalo Sifuentes", role: "Masters 2nd year", affiliation: "Ikeuchi Lab, IIS, University of Tokyo", bio: "Researcher on brain organoid circuits as a model for psychiatric disorders.", photo: "" },
+  faq: [
+    { q: "Who can attend?", a: "Anyone in Ikeuchi Lab — professors, graduate students, research students, and postdocs. No registration required." },
+    { q: "Do I need to prepare anything?", a: "Nothing. Bring curiosity and maybe your own lunch." },
+    { q: "Can I sign up to present?", a: "Yes! Please contact Gonzalo Sifuentes directly to get on the schedule." },
+    { q: "What language is it in?", a: "English, so every lab member can participate." },
   ],
-  contact:"lsd@ikeuchi.iis.u-tokyo.ac.jp",
-  formUrl:""
+  contact: "sifuentesgonzalo@g.ecc.u-tokyo.ac.jp",
+  formUrl: ""    // set to Google Form URL when ready (e.g. https://docs.google.com/forms/d/e/XXX/formResponse)
 };
 
 const ARCHIVE=[
