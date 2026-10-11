@@ -1,15 +1,9 @@
 /* =====================================================================
-   config.js  —  THE ONLY FILE YOU EDIT EACH WEEK
+   config.js
    ---------------------------------------------------------------------
-   Weekly routine (2 minutes):
-     1. Copy last week's talk into ARCHIVE (one new line, see template).
+   How to update:
+     1. Copy last week's talk into ARCHIVE.
      2. Overwrite the fields inside SEMINAR with this week's talk.
-     3. Save / commit. The site updates in about a minute.
-
-   Rules for not breaking anything:
-     • Keep every quote  "like this"  and every comma at the end of a line.
-     • Never delete the { } [ ] or the semicolons  ;  at the end of blocks.
-     • If the page ever shows a red banner, a quote or comma went missing here.
 
    Time format:  "2026-10-16 12:45"  means 12:45 Japan time (JST).
    (The older UTC format such as "2026-10-16T03:45:00Z" still works too.)
@@ -32,7 +26,7 @@ const SEMINAR = {
     { num: "02", icon: "i-brain",     text: "Standard axes of anatomical direction" },
     { num: "03", icon: "i-synapse",   text: "Open questions remain: what is 'conciousness' and when does it appear?" }
   ],
-  speaker: { name: "Gonzalo Sifuentes", role: "Masters 2nd year", affiliation: "Ikeuchi Lab, IIS, University of Tokyo", bio: "Researcher on brain organoid circuits as a model for psychiatric disorders.", photo: "gonzalo.jpg" },
+  speaker: { name: "Gonzalo Sifuentes", role: "Masters 2nd year", affiliation: "Ikeuchi Lab, IIS, University of Tokyo", bio: "Researcher on brain organoid circuits as models for psychiatric disorders.", photo: "gonzalo.jpg" },
   faq: [
     { q: "Who can attend?", a: "Any member of the Ikeuchi Lab — professors, graduate students, and postdocs. No registration required." },
     { q: "Do I need to prepare anything?", a: "Nothing. Bring curiosity and maybe your own lunch." },
@@ -45,7 +39,7 @@ const SEMINAR = {
      formUrl   = the form's address ending in /formResponse
      formEntry = the name-question id, looks like  entry.1234567890
      Leave both "" to only show the on-page confirmation. */
-  formUrl: "",
+  formUrl: "https://script.google.com/macros/s/AKfycbzOTWaBTRI7GSCCz9d8bpNrRPgP-4bZZ4gC_mpaPskUz8fUGsdy9kQAyrnbfExVqxxTsQ/exec",
   formEntry: ""
 };
 
