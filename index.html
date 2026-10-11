@@ -667,37 +667,68 @@ const ARCHIVE=[
   </div>
 </section>
 
-<!-- 2. METRICS -->
-<div class="metrics" data-stagger>
-  <div class="metric" style="--i:0">
-    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-stopwatch"/></svg></div>
-    <div class="metric-num">45<span style="font-size:22px"> min</span></div>
-    <div class="metric-label">per session, over lunch</div>
+  <!-- 2. THIS WEEK -->
+<section id="this-week" class="section section--surface">
+  <div class="week-grid">
+    <div data-reveal="left">
+      <span class="kicker kicker-cyan" style="display:block;margin-bottom:14px">This week</span>
+      <h2 id="weekTitle" style="font-size:clamp(24px,5.5vw,34px);margin-bottom:18px"></h2>
+      <div id="weekTopic" style="font-size:15px;line-height:1.7;color:var(--muted)"></div>
+      <div class="week-takeaways" id="takeaways"></div>
+    </div>
+    <div data-reveal="right">
+      <div class="speaker-card">
+        <div class="speaker-photo" id="speakerPhoto">
+          <svg class="ico" style="width:56px;height:56px;color:var(--muted);opacity:.4"><use href="#i-user"/></svg>
+        </div>
+        <div class="speaker-meta">
+          <div class="speaker-name" id="spName"></div>
+          <div class="speaker-role" id="spRole"></div>
+          <div class="speaker-aff" id="spAff"></div>
+          <p class="speaker-bio" id="spBio"></p>
+          <div class="speaker-btns">
+            <a id="calBtnSp" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:13px;padding:11px 16px">
+              <svg class="ico ico-sm"><use href="#i-calendar"/></svg>Add to calendar
+            </a>
+            <a href="#join" class="btn btn-cyan" style="font-size:13px;padding:11px 16px">Save my seat</a>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="metric" style="--i:1">
-    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-brain"/></svg></div>
-    <div class="metric-num"><span id="m-done">0</span></div>
-    <div class="metric-label">sessions held</div>
-  </div>
-  <div class="metric" style="--i:2">
-    <div class="ico-box ico-box-purple"><svg class="ico" style="color:var(--purple)"><use href="#i-calendar"/></svg></div>
-    <div class="metric-num" style="color:var(--purple)"><span id="m-upcoming">0</span></div>
-    <div class="metric-label">sessions planned</div>
-  </div>
-  <div class="metric" style="--i:3">
-    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-users"/></svg></div>
-    <div class="metric-num"><span id="m-speakers">0</span></div>
-    <div class="metric-label">speakers so far</div>
-  </div>
-</div>
+  <ul id="takeawaysList" class="week-takeaways" style="list-style:none" data-stagger></ul>
+</section>
 
-<hr class="div--inset">
+<!-- 3. RSVP BAND -->
+<section id="join" class="rsvp-band section" data-reveal="scale">
+  <div class="rsvp-band-grid">
+    <div>
+      <h2>Save your seat.</h2>
+      <p style="font-size:15px;color:rgba(11,15,25,.65);max-width:360px">
+        Type your name and confirm. Takes two seconds.
+      </p>
+    </div>
+    <div>
+      <form id="rsvpForm" autocomplete="off">
+        <label class="sr-only" for="nameInput">Your name</label>
+        <input id="nameInput" type="text" placeholder="Your name" maxlength="80" required inputmode="text" autocomplete="name">
+        <button type="submit" class="btn btn-dark">Confirm</button>
+      </form>
+      <p id="rsvpStatus" role="status" style="margin-top:12px;min-height:1.4rem;font-size:14px;font-weight:600;color:var(--bg)"></p>
+      <div id="calAfter" style="display:none;margin-top:10px">
+        <a id="calBtn2" target="_blank" rel="noopener" class="btn btn-ghost" style="border-color:rgba(11,15,25,.3);color:var(--bg);font-size:13px;padding:11px 16px;width:100%">
+          <svg class="ico ico-sm"><use href="#i-calendar"/></svg>Add it to my calendar
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-<!-- 3. RULES -->
+<!-- 4. What is LSD? -->
 <section id="rules" class="section section--dark" data-reveal>
   <div style="margin-bottom:28px">
     <span class="draw-rule"></span>
-    <h2 style="font-size:clamp(26px,6vw,34px);margin-bottom:8px">How it works</h2>
+    <h2 style="font-size:clamp(26px,6vw,34px);margin-bottom:8px">What is LSD?</h2>
     <p style="color:var(--muted);font-size:14px">Six rules. Most of them are about lunch.</p>
   </div>
   <div class="rules-grid" data-stagger>
@@ -736,63 +767,31 @@ const ARCHIVE=[
 
 <hr class="div--inset">
 
-<!-- 4. THIS WEEK -->
-<section id="this-week" class="section section--surface">
-  <div class="week-grid">
-    <div data-reveal="left">
-      <span class="kicker kicker-cyan" style="display:block;margin-bottom:14px">This week</span>
-      <h2 id="weekTitle" style="font-size:clamp(24px,5.5vw,34px);margin-bottom:18px"></h2>
-      <div id="weekTopic" style="font-size:15px;line-height:1.7;color:var(--muted)"></div>
-      <div class="week-takeaways" id="takeaways"></div>
-    </div>
-    <div data-reveal="right">
-      <div class="speaker-card">
-        <div class="speaker-photo" id="speakerPhoto">
-          <svg class="ico" style="width:56px;height:56px;color:var(--muted);opacity:.4"><use href="#i-user"/></svg>
-        </div>
-        <div class="speaker-meta">
-          <div class="speaker-name" id="spName"></div>
-          <div class="speaker-role" id="spRole"></div>
-          <div class="speaker-aff" id="spAff"></div>
-          <p class="speaker-bio" id="spBio"></p>
-          <div class="speaker-btns">
-            <a id="calBtnSp" target="_blank" rel="noopener" class="btn btn-ghost" style="font-size:13px;padding:11px 16px">
-              <svg class="ico ico-sm"><use href="#i-calendar"/></svg>Add to calendar
-            </a>
-            <a href="#join" class="btn btn-cyan" style="font-size:13px;padding:11px 16px">Save my seat</a>
-          </div>
-        </div>
-      </div>
-    </div>
+<!-- 5. METRICS -->
+<div class="metrics" data-stagger>
+  <div class="metric" style="--i:0">
+    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-stopwatch"/></svg></div>
+    <div class="metric-num">45<span style="font-size:22px"> min</span></div>
+    <div class="metric-label">per session, over lunch</div>
   </div>
-  <ul id="takeawaysList" class="week-takeaways" style="list-style:none" data-stagger></ul>
-</section>
-
-<!-- 5. RSVP BAND -->
-<section id="join" class="rsvp-band section" data-reveal="scale">
-  <div class="rsvp-band-grid">
-    <div>
-      <h2>Save your seat.</h2>
-      <p style="font-size:15px;color:rgba(11,15,25,.65);max-width:360px">
-        Type your name and confirm. Takes two seconds.
-      </p>
-    </div>
-    <div>
-      <form id="rsvpForm" autocomplete="off">
-        <label class="sr-only" for="nameInput">Your name</label>
-        <input id="nameInput" type="text" placeholder="Your name" maxlength="80" required inputmode="text" autocomplete="name">
-        <button type="submit" class="btn btn-dark">Confirm</button>
-      </form>
-      <p id="rsvpStatus" role="status" style="margin-top:12px;min-height:1.4rem;font-size:14px;font-weight:600;color:var(--bg)"></p>
-      <div id="calAfter" style="display:none;margin-top:10px">
-        <a id="calBtn2" target="_blank" rel="noopener" class="btn btn-ghost" style="border-color:rgba(11,15,25,.3);color:var(--bg);font-size:13px;padding:11px 16px;width:100%">
-          <svg class="ico ico-sm"><use href="#i-calendar"/></svg>Add it to my calendar
-        </a>
-      </div>
-    </div>
+  <div class="metric" style="--i:1">
+    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-brain"/></svg></div>
+    <div class="metric-num"><span id="m-done">0</span></div>
+    <div class="metric-label">sessions held</div>
   </div>
-</section>
+  <div class="metric" style="--i:2">
+    <div class="ico-box ico-box-purple"><svg class="ico" style="color:var(--purple)"><use href="#i-calendar"/></svg></div>
+    <div class="metric-num" style="color:var(--purple)"><span id="m-upcoming">0</span></div>
+    <div class="metric-label">sessions planned</div>
+  </div>
+  <div class="metric" style="--i:3">
+    <div class="ico-box ico-box-cyan"><svg class="ico" style="color:var(--cyan)"><use href="#i-users"/></svg></div>
+    <div class="metric-num"><span id="m-speakers">0</span></div>
+    <div class="metric-label">speakers so far</div>
+  </div>
+</div>
 
+  
 <!-- 6. ARCHIVE -->
 <section id="archive" class="section section--dark">
   <div style="margin-bottom:24px" data-reveal>
