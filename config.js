@@ -32,14 +32,18 @@ const SITE = {
 
 /* ---------------------------------------------------------------------
    SPEAKERS — key = full name, exactly as written in EVENTS.
-   photo: a JPG in images/ (about 800 px wide). Leave "" to show initials.
+   Every speaker needs all of:
+     role        their position          e.g. "Masters 2nd year", "Assistant Professor"
+     affiliation where they are          e.g. "Ikeuchi Lab, IIS, University of Tokyo"
+     bio         the research they do    one sentence
+     photo       images/firstname-lastname.jpg (JPG, about 800 px wide)
    --------------------------------------------------------------------- */
 const SPEAKERS = {
   "Gonzalo Sifuentes": {
     role: "Masters 2nd year",
     affiliation: "Ikeuchi Lab, IIS, University of Tokyo",
     bio: "Researcher on brain organoid circuits as models for psychiatric disorders.",
-    photo: "images/gonzalo.jpg"
+    photo: "images/gonzalo-sifuentes.jpg"
   }
 };
 

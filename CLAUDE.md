@@ -21,13 +21,31 @@ When the user says **"add an LSD event"** (or similar), do this:
    Optional: topic, 3 takeaways, room, duration, link.
    Defaults: `duration` = `SITE.defaultDuration` (45), `location` = `SITE.defaultRoom` ("As Room 302, IIS").
    A relative date ("next Tuesday") → work out the absolute date in JST and state it in the report.
-2. **Speaker.** If the name is not a key in `SPEAKERS`, add an entry
-   (`role`, `affiliation`, `bio` from the message, or ask) and **ask the user for a photo**.
+2. **Speaker.** Every speaker must have their information in `SPEAKERS` — never add an event for
+   someone who isn't there. If the name is new, add an entry with **all** of:
+   - `role` — their position (e.g. "Masters 2nd year", "Assistant Professor")
+   - `affiliation` — lab / institute / university
+   - `bio` — one sentence on the research they do
+   - `photo` — see below
+
+   Take these from the message; **ask for any that are missing before adding the event**.
+   If the speaker already exists, reuse the entry (update it only if the user gives new details).
+   **Ask the user for a photo** of a new speaker.
    Save it as `images/firstname-lastname.jpg` (lowercase, ASCII, hyphen), JPG not HEIC, about 800 px wide:
+   Crop to 4:3 around the face, resize to 800×600, and **strip metadata** (phone photos carry GPS):
    ```bash
-   sips -s format jpeg --resampleWidth 800 "<their file>" --out images/firstname-lastname.jpg
+   python3 - "<their file>" images/firstname-lastname.jpg <<'PY'
+   import sys; from PIL import Image, ImageOps
+   im = ImageOps.exif_transpose(Image.open(sys.argv[1])).convert("RGB")   # HEIC: convert with sips first
+   W, H = im.size; cw = int(min(W, H * 4 / 3)); ch = int(cw * 3 / 4)
+   left = (W - cw) // 2; top = max(0, min(H - ch, int(H * 0.08)))       # adjust left/top to centre the face
+   im.crop((left, top, left + cw, top + ch)).resize((800, 600), Image.LANCZOS) \
+     .save(sys.argv[2], "JPEG", quality=85, optimize=True, progressive=True)
+   PY
    ```
-   (only resample down; if the photo is narrower than 800 px, just convert.) Set `photo: "images/firstname-lastname.jpg"`.
+   (HEIC → `sips -s format jpeg in.heic --out /tmp/x.jpg` first.) Look at the result before committing.
+   Set `photo: "images/firstname-lastname.jpg"`. To replace a photo, save the new one under the same
+   rule, point `photo` at it and `git rm` the old file.
    No photo yet → `photo: ""` (initials show); say so in the report.
 3. **Append one entry to `EVENTS`.** Change nothing else in the file.
    ```js
@@ -44,7 +62,8 @@ When the user says **"add an LSD event"** (or similar), do this:
    ```
 4. **Check** (all must pass — see "Checks" below).
 5. **Commit and push**:
-   `git add config.js images/ && git commit -m "Add LSD event: <title> (<YYYY-MM-DD>)" && git push`
+   `git add config.js images/ && git commit -m "Add LSD event: <title> (<YYYY-MM-DD>)"`, then `git push`
+   (push only when the user asked to push; otherwise ask).
 6. **Confirm the deploy**: `gh api repos/PercyGonzalo27/lsd-info/pages/builds/latest --jq '.status+" "+.commit'`
    until it shows `built` and the new commit, then **report the live URL**
    https://percygonzalo27.github.io/lsd-info/ plus what the checker printed (featured session, counts).

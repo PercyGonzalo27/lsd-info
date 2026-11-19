@@ -33,7 +33,7 @@ lsd-info/
 ├── styles.css               ← All CSS (HUD look). Edit only for design changes.
 ├── backdrop.js              ← Animated "neuron" background (decoration only)
 ├── images/                  ← Speaker photos: firstname-lastname.jpg
-│   └── gonzalo.jpg
+│   └── gonzalo-sifuentes.jpg
 ├── tools/check-events.mjs   ← Validates config.js before a push (not loaded by the site)
 ├── CLAUDE.md                ← Instructions Claude Code follows ("add an LSD event")
 └── LSD_PROJECT_CONTEXT.md   ← This file
@@ -107,7 +107,7 @@ const SITE = {
 
 const SPEAKERS = {                     // one entry per person, keyed by full name
   "Gonzalo Sifuentes": { role: "Masters 2nd year", affiliation: "Ikeuchi Lab, IIS, University of Tokyo",
-                         bio: "...", photo: "images/gonzalo.jpg" }
+                         bio: "...", photo: "images/gonzalo-sifuentes.jpg" }
 };
 
 const EVENTS = [                       // every session, past and future, any order
@@ -142,9 +142,13 @@ By hand: edit `config.js`, run `node tools/check-events.mjs`, then `git commit` 
 
 ---
 
-## 8. Speaker photos
+## 8. Speakers and photos
 
-- One photo per person in `images/`, named `firstname-lastname.jpg`, about 800 px wide, JPG (not HEIC).
+- **Every speaker has their information in `SPEAKERS`**: `role` (position), `affiliation`, `bio` (the research
+  they do) and `photo`. `tools/check-events.mjs` fails if any of the first three is missing, or if an event names
+  someone who is not in `SPEAKERS`. Claude Code asks for missing details before adding an event.
+- One photo per person in `images/`, named `firstname-lastname.jpg`, cropped 4:3, 800×600, JPG (not HEIC),
+  metadata stripped (phone photos can contain GPS location).
 - Linked once in `SPEAKERS[...].photo`; reused for every session by that speaker (speaker card, archive cards, carousel, pop-up).
 - Missing photo or speaker not in `SPEAKERS` → initials (e.g. "GS") and a console warning; the page never breaks.
 - The app also tries `.jpeg`/`.png`/`.webp` and lower-case variants if the exact file is missing.

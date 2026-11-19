@@ -35,9 +35,12 @@ if (!Array.isArray(EVENTS)) { console.error("✗ EVENTS must be a list [ ... ]")
 for (const f of ["series", "short", "language", "defaultRoom", "defaultDuration", "contact"])
   if (SITE[f] == null || SITE[f] === "") errors.push(`SITE.${f} is empty`);
 
-/* Speakers: photo must exist and be a JPG/PNG/WebP (not HEIC). */
+/* Speakers: position, affiliation and research are required; photo must exist and be JPG/PNG/WebP (not HEIC). */
+const FIELDS = { role: "position (role)", affiliation: "affiliation", bio: "research description (bio)" };
 for (const [name, sp] of Object.entries(SPEAKERS)) {
-  if (!sp.photo) { warnings.push(`${name}: no photo, initials will be shown`); continue; }
+  for (const [f, label] of Object.entries(FIELDS))
+    if (!String(sp[f] || "").trim()) errors.push(`${name}: ${label} is missing in SPEAKERS`);
+  if (!sp.photo) { warnings.push(`${name}: no photo yet, initials will be shown`); continue; }
   if (/\.hei[cf]$/i.test(sp.photo)) errors.push(`${name}: photo "${sp.photo}" is HEIC, browsers cannot show it — export as JPG`);
   else if (!/^https?:/i.test(sp.photo) && !existsSync(join(root, sp.photo))) errors.push(`${name}: photo "${sp.photo}" not found in the repository`);
 }
@@ -54,7 +57,7 @@ const list = EVENTS.map((e, i) => {
   const back = isNaN(start) ? "" : new Date(start.getTime() + 9 * 3600000).toISOString().slice(0, 16).replace("T", " ");
   if (isNaN(start) || back !== String(e.start).trim()) errors.push(`${label}: start "${e.start}" is not a real date/time`);
   if (!e.speaker) errors.push(`${label}: speaker is missing`);
-  else if (!speakerKeys.has(key(e.speaker))) warnings.push(`${label}: speaker "${e.speaker}" is not in SPEAKERS (initials will show)`);
+  else if (!speakerKeys.has(key(e.speaker))) errors.push(`${label}: speaker "${e.speaker}" is not in SPEAKERS — add their position, affiliation, research and photo`);
   if (e.duration != null && !(+e.duration > 0)) errors.push(`${label}: duration must be a number of minutes`);
   if (e.takeaways != null && !Array.isArray(e.takeaways)) errors.push(`${label}: takeaways must be a list ["", "", ""]`);
   else if ((e.takeaways || []).length !== 3) warnings.push(`${label}: has ${(e.takeaways || []).length} takeaways (3 expected)`);
