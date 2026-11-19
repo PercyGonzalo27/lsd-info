@@ -320,7 +320,7 @@ footer.section{background:rgba(var(--bg-rgb),.5)}
   max-height:calc(92vh - var(--sab));max-height:calc(92svh - var(--sab));
   overflow-y:auto;position:relative;padding-bottom:var(--sab);
   box-shadow:0 -10px 60px -10px rgba(var(--purple-rgb),.35)}
-.modal-img{position:relative;height:170px;background:linear-gradient(135deg,rgba(var(--purple-rgb),.25),rgba(var(--cyan-rgb),.1));display:grid;place-items:center}
+.modal-img{position:relative;aspect-ratio:2/1;max-height:42vh;background:linear-gradient(135deg,rgba(var(--purple-rgb),.25),rgba(var(--cyan-rgb),.1));display:grid;place-items:center}
 .modal-body{padding:24px}
 .modal-close{position:sticky;top:0;float:right;margin:12px 12px -56px 0;
   background:rgba(var(--bg-rgb),.8);border:1px solid var(--div2);border-radius:50%;color:var(--text);
@@ -330,7 +330,7 @@ footer.section{background:rgba(var(--bg-rgb),.5)}
 .modal-actions .btn{width:100%}
 
 /* ── Photos (any size / orientation, cropped to fit) ───── */
-.photo{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 22%;background:var(--bg)}
+.photo{display:block;width:100%;height:100%;object-fit:cover;object-position:50% 35%;   /* per-speaker "focus" in config.js overrides */background:var(--bg)}
 .photo-wrap{position:absolute;inset:0;overflow:hidden;background:rgba(var(--bg-rgb),.6)}
 .photo-initials{position:absolute;inset:0;display:grid;place-items:center;font-family:'Archivo',sans-serif;
   font-size:clamp(28px,8vw,44px);font-weight:800;color:var(--cyan);text-shadow:0 0 18px rgba(var(--cyan-rgb),.4)}
@@ -387,7 +387,6 @@ html.js [data-stagger].is-in>*{opacity:1;transform:none}
   .search-wrap{width:300px}
   .modal-backdrop{align-items:center;padding:20px}
   .modal-box{max-width:640px;border-radius:var(--radius-lg);border-bottom:1px solid var(--glass-border)}
-  .modal-img{height:210px}
   .stack-wrap{height:420px}
   .stack-card{width:230px;height:320px}
   .footer-inner{flex-direction:row;align-items:center;justify-content:space-between}

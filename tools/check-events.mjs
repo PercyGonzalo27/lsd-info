@@ -40,6 +40,8 @@ const FIELDS = { role: "position (role)", affiliation: "affiliation", bio: "rese
 for (const [name, sp] of Object.entries(SPEAKERS)) {
   for (const [f, label] of Object.entries(FIELDS))
     if (!String(sp[f] || "").trim()) errors.push(`${name}: ${label} is missing in SPEAKERS`);
+  if (sp.focus != null && !/^\d{1,3}% \d{1,3}%$/.test(String(sp.focus).trim()))
+    errors.push(`${name}: focus "${sp.focus}" must look like "50% 40%" (x% y% of the face in the photo)`);
   if (!sp.photo) { warnings.push(`${name}: no photo yet, initials will be shown`); continue; }
   if (/\.hei[cf]$/i.test(sp.photo)) errors.push(`${name}: photo "${sp.photo}" is HEIC, browsers cannot show it — export as JPG`);
   else if (!/^https?:/i.test(sp.photo) && !existsSync(join(root, sp.photo))) errors.push(`${name}: photo "${sp.photo}" not found in the repository`);

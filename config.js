@@ -37,13 +37,17 @@ const SITE = {
      affiliation where they are          e.g. "Ikeuchi Lab, IIS, University of Tokyo"
      bio         the research they do    one sentence
      photo       images/firstname-lastname.jpg (JPG, about 800 px wide)
+   Optional:
+     focus       where the face is in the photo, "x% y%" from the top-left
+                 (e.g. "50% 40%"), so wide boxes never crop it. Default "50% 35%".
    --------------------------------------------------------------------- */
 const SPEAKERS = {
   "Gonzalo Sifuentes": {
     role: "Masters 2nd year",
     affiliation: "Ikeuchi Lab, IIS, University of Tokyo",
     bio: "Researcher on brain organoid circuits as models for psychiatric disorders.",
-    photo: "images/gonzalo-sifuentes.jpg"
+    photo: "images/gonzalo-sifuentes.jpg",
+    focus: "50% 40%"
   }
 };
 

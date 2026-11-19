@@ -44,7 +44,9 @@ When the user says **"add an LSD event"** (or similar), do this:
    PY
    ```
    (HEIC → `sips -s format jpeg in.heic --out /tmp/x.jpg` first.) Look at the result before committing.
-   Set `photo: "images/firstname-lastname.jpg"`. To replace a photo, save the new one under the same
+   Set `photo: "images/firstname-lastname.jpg"` and **`focus: "x% y%"`** = the centre of the face in the
+   saved photo (x from the left, y from the top; e.g. face centred at 400,240 in 800×600 → `"50% 40%"`).
+   This keeps the face visible in the wide pop-up and archive-card photos. To replace a photo, save the new one under the same
    rule, point `photo` at it and `git rm` the old file.
    No photo yet → `photo: ""` (initials show); say so in the report.
 3. **Append one entry to `EVENTS`.** Change nothing else in the file.

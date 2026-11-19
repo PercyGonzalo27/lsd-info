@@ -133,8 +133,11 @@ function resolvePhoto(file) {
 
 /* Markup for a photo: initials show instantly, the picture fades in when it is found. */
 function photoHTML(s) {
+  /* focus = the point of the photo that must stay visible (the face), e.g. "50% 40%".
+     Used as object-position, so the face stays in view in every box shape. */
+  const focus = /^\d{1,3}% \d{1,3}%$/.test(String(s.speaker.focus || "").trim()) ? ' style="object-position:' + s.speaker.focus.trim() + '"' : "";
   const img = s.photoFile
-    ? '<img class="photo" alt="' + esc(s.speaker.name) + '" data-photo="' + esc(s.photoFile) + '" decoding="async">'
+    ? '<img class="photo" alt="' + esc(s.speaker.name) + '" data-photo="' + esc(s.photoFile) + '" decoding="async"' + focus + ">"
     : "";
   return '<div class="photo-wrap"><div class="photo-initials" aria-hidden="true">' + esc(initialsOf(s.speaker.name)) + "</div>" + img + "</div>";
 }
