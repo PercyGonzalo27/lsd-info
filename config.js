@@ -45,7 +45,7 @@ const SPEAKERS = {
   "Gonzalo Sifuentes": {
     role: "Masters 2nd year",
     affiliation: "Ikeuchi Lab, IIS, University of Tokyo",
-    bio: "Researcher on brain organoid circuits as models for psychiatric disorders.",
+    bio: "Researcher on neural organoid circuits as models for psychiatric disorders.",
     photo: "images/gonzalo-sifuentes.jpg",
     focus: "50% 40%"
   }
