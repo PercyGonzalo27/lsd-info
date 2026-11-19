@@ -202,7 +202,7 @@ function countUp(el, to) {
   if (reduceMotion) { el.textContent = to; return; }
   const t0 = performance.now(), dur = 1200;
   const step = t => {
-    const p = Math.min((t - t0) / dur, 1);
+    const p = Math.max(0, Math.min((t - t0) / dur, 1));
     el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3)));
     if (p < 1) requestAnimationFrame(step);
   };
@@ -449,7 +449,7 @@ safe("nav", () => {
   const nav = $("nav");
   if (!nav) return;
   window.addEventListener("scroll", () => {
-    nav.style.background = window.scrollY > 10 ? "rgba(22,29,48,.98)" : "var(--surface)";
+    nav.classList.toggle("is-scrolled", window.scrollY > 10);   // colours in styles.css
   }, { passive: true });
 });
 

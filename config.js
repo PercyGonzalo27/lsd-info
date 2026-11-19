@@ -20,11 +20,11 @@ const SEMINAR = {
   start: "2026-10-16T03:45:00Z",   // = 2026-10-16 12:45 JST
   duration: 45,                     // minutes
   location: "As Room 302, IIS",
-  topic: "How does the human bran develop and what are the major factors driving this?",
+  topic: "How does the human brain develop and what are the major factors driving this?",
   takeaways: [
     { num: "01", icon: "i-electrode", text: "Embryonic development of brain vesicles" },
     { num: "02", icon: "i-brain",     text: "Standard axes of anatomical direction" },
-    { num: "03", icon: "i-synapse",   text: "Open questions remain: what is 'conciousness' and when does it appear?" }
+    { num: "03", icon: "i-synapse",   text: "Open questions remain: what is 'consciousness' and when does it appear?" }
   ],
   speaker: { name: "Gonzalo Sifuentes", role: "Masters 2nd year", affiliation: "Ikeuchi Lab, IIS, University of Tokyo", bio: "Researcher on brain organoid circuits as models for psychiatric disorders.", photo: "gonzalo.jpg" },
   faq: [

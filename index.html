@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <!-- viewport-fit=cover lets the page use the full iPhone screen (notch / home bar handled in styles.css) -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#161D30">
+<meta name="theme-color" content="#0B0F19">
 <meta name="color-scheme" content="dark">
 <meta name="format-detection" content="telephone=no">
 <title>Ikeuchi Lab · Lunch Science Discussion (LSD)</title>
@@ -24,6 +24,12 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+
+<!-- Animated backdrop (decoration only): gradient + hazes in styles.css, neurons in backdrop.js -->
+<div class="backdrop" aria-hidden="true">
+  <i class="haze haze-1"></i><i class="haze haze-2"></i><i class="haze haze-3"></i>
+  <canvas id="bdCanvas"></canvas>
+</div>
 
 <!-- ── SVG icon sprite ─────────────────────────────────── -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -184,7 +190,7 @@
   </svg>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <p class="kicker" style="margin-bottom:14px">Ikeuchi Lab · IIS · UTokyo</p>
+    <p class="kicker hero-kicker" style="margin-bottom:14px">Ikeuchi Lab · IIS · UTokyo</p>
     <h1>Lunch<br>Science<br>Discussion</h1>
     <div class="lsd-pills" style="margin-bottom:24px">
       <div class="lsd-pill pill-l">
@@ -203,7 +209,7 @@
         <span class="pill-word">Discussion</span>
       </div>
     </div>
-    <p style="font-size:15px;color:var(--muted);max-width:480px;margin-bottom:0">
+    <p class="hero-lead">
       Open to all members of our glorious lab.
     </p>
     <dl class="hero-meta" id="heroMeta"></dl>
@@ -275,8 +281,8 @@
 <!-- 4. WHAT IS LSD? -->
 <section id="rules" class="section section--dark" data-reveal>
   <div style="margin-bottom:28px">
-    <span class="draw-rule"></span>
-    <h2 style="font-size:clamp(26px,6vw,34px);margin-bottom:8px">What is LSD?</h2>
+    <div class="hud-head"><span class="draw-rule"></span><span class="hud-label" aria-hidden="true">CH02 · _PROTOCOL</span></div>
+    <h2 class="sec-title">What is LSD?</h2>
   </div>
   <div class="rules-grid" data-stagger>
     <div class="rule-cell" style="--i:0">
@@ -289,7 +295,6 @@
       <h3>Discussion, not a lecture</h3>
       <p>Everyone shares what they know about the topic for 45 min.</p>
     </div>
-    </div>
     <div class="rule-cell" style="--i:2">
       <div class="ico-box ico-box-green"><svg class="ico-lg" style="color:var(--green)"><use href="#i-globe"/></svg></div>
       <h3>Held in English</h3>
@@ -297,7 +302,6 @@
     </div>
   </div>
 </section>
-
 
 <!-- 5. METRICS -->
 <div class="metrics" data-stagger>
@@ -318,12 +322,11 @@
   </div>
 </div>
 
-  
 <!-- 6. ARCHIVE -->
 <section id="archive" class="section section--dark">
   <div style="margin-bottom:24px" data-reveal>
-    <span class="draw-rule"></span>
-    <h2 style="font-size:clamp(26px,6vw,34px)">Previously on <span style="color:var(--cyan)">LSD</span></h2>
+    <div class="hud-head"><span class="draw-rule"></span><span class="hud-label" aria-hidden="true">CH03 · _ARCHIVE</span></div>
+    <h2 class="sec-title">Previously on <span style="color:var(--cyan)">LSD</span></h2>
   </div>
   <div class="stack-wrap" id="stackWrap" data-fan style="margin-bottom:48px">
     <div id="stack" style="position:absolute;inset:0"></div>
@@ -354,7 +357,8 @@
 
 <!-- 7. FAQ -->
 <section id="faq" class="section section--surface" data-reveal>
-  <h2 style="font-size:clamp(26px,6vw,34px);margin-bottom:28px">Good to know</h2>
+  <div class="hud-head"><span class="draw-rule"></span><span class="hud-label" aria-hidden="true">CH04 · _FAQ</span></div>
+  <h2 class="sec-title" style="margin-bottom:28px">Good to know</h2>
   <div class="faq-list" id="faqList"></div>
 </section>
 
@@ -399,5 +403,6 @@
 <!-- config.js = what you edit each week.  app.js = page logic (do not edit). Order matters. -->
 <script src="config.js"></script>
 <script src="app.js"></script>
+<script src="backdrop.js"></script>
 </body>
 </html>
