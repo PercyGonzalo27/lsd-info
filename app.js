@@ -1,6 +1,8 @@
 /* =====================================================================
    app.js  —  page logic. You never need to edit this file.
-   Everything you change each week lives in config.js.
+   Sessions, speakers and settings all live in config.js
+   (SITE, SPEAKERS, EVENTS). This file decides what is next, what is
+   done, and fills the page.
    ===================================================================== */
 (function () {
 "use strict";
@@ -8,7 +10,7 @@
 window.__lsdReady = false;
 
 /* ---------- 0. Stop early, with a visible message, if config.js is broken ---------- */
-if (typeof LAB === "undefined" || typeof SEMINAR === "undefined" || typeof ARCHIVE === "undefined") {
+if (typeof SITE === "undefined" || typeof EVENTS === "undefined" || !Array.isArray(EVENTS)) {
   const banner = document.createElement("div");
   banner.className = "config-error";
   banner.setAttribute("role", "alert");
@@ -67,25 +69,22 @@ function initialsOf(name) {
   return (parts[0].charAt(0) + (parts.length > 1 ? parts[parts.length - 1].charAt(0) : "")).toUpperCase();
 }
 
-const photoByExact = new Map(), photoByLoose = new Map();
-function registerPhoto(name, file) {
-  if (!name || !file) return;
-  const k = nameKeys(name);
-  photoByExact.set(k.exact, file);
-  if (!photoByLoose.has(k.loose)) photoByLoose.set(k.loose, file);
-}
-if (typeof SPEAKER_PHOTOS !== "undefined" && SPEAKER_PHOTOS) {
-  Object.keys(SPEAKER_PHOTOS).forEach(n => registerPhoto(n, SPEAKER_PHOTOS[n]));
-}
-if (SEMINAR.speaker && typeof SEMINAR.speaker === "object") registerPhoto(SEMINAR.speaker.name, SEMINAR.speaker.photo);
-
-function photoFileFor(name, ownFile) {
-  if (ownFile) return ownFile;
-  const k = nameKeys(name);
-  return photoByExact.get(k.exact) || photoByLoose.get(k.loose) || "";
+/* SPEAKERS (config.js): one entry per person. Matched by name, ignoring case,
+   dots and extra spaces. Unknown names still work: they show initials. */
+const SPEAKER_LIST = (typeof SPEAKERS !== "undefined" && SPEAKERS) ? SPEAKERS : {};
+const speakerByKey = new Map();
+Object.keys(SPEAKER_LIST).forEach(n => speakerByKey.set(nameKeys(n).exact, Object.assign({ name: n }, SPEAKER_LIST[n])));
+const warnedSpeakers = new Set();
+function speakerFor(name) {
+  const found = speakerByKey.get(nameKeys(name).exact);
+  if (!found && name && !warnedSpeakers.has(name)) {
+    warnedSpeakers.add(name);
+    console.warn('[LSD] Speaker "' + name + '" is not in SPEAKERS in config.js, so initials are shown instead of a photo.');
+  }
+  return Object.assign({ name: String(name || ""), role: "", affiliation: "", bio: "", photo: "" }, found || {}, { name: found ? found.name : String(name || "") });
 }
 
-let PHOTO_DIR = (typeof PHOTO_FOLDER === "string") ? PHOTO_FOLDER.trim().replace(/^\.?\//, "") : "images/";
+let PHOTO_DIR = "images/";   // where a photo given without a folder is looked for first
 if (PHOTO_DIR && !/\/$/.test(PHOTO_DIR)) PHOTO_DIR += "/";
 
 /* Every place a picture might reasonably be: the folder, then the site root,
@@ -157,38 +156,40 @@ function hydratePhotos(root) {
   });
 }
 
-/* ---------- 3. Sessions ---------- */
-function normalise(x, isCurrent) {
-  const base = { name: "", role: "", affiliation: "", bio: "", photo: "" };
-  const sp = typeof x.speaker === "string" ? Object.assign(base, { name: x.speaker }) : Object.assign(base, x.speaker || {});
+/* ---------- 3. Sessions (EVENTS in config.js, any order) ---------- */
+const NOW = new Date();
+function normalise(x) {
+  const sp = speakerFor(x.speaker);
+  const startDate = parseWhen(x.start);
+  const duration = +x.duration || SITE.defaultDuration || 45;
   return {
-    title: x.title, start: x.start, startDate: parseWhen(x.start),
-    duration: x.duration || SEMINAR.duration || 45,
-    topic: x.topic || "", speaker: sp, link: x.link || "",
-    photoFile: photoFileFor(sp.name, sp.photo),
-    isCurrent: !!isCurrent
+    title: x.title || "", start: x.start, startDate: startDate,
+    endDate: new Date(startDate.getTime() + duration * 60000),
+    duration: duration, location: x.location || SITE.defaultRoom || "",
+    topic: x.topic || "",
+    takeaways: (x.takeaways || []).map(t => typeof t === "string" ? t : (t && t.text) || "").filter(Boolean),
+    speaker: sp, link: x.link || "", photoFile: sp.photo || ""
   };
 }
-const CURRENT = normalise(SEMINAR, true);
-/* If the same session was also pre-filled in ARCHIVE, the richer SEMINAR entry wins. */
-const ALL = ARCHIVE.map(x => normalise(x, false))
-  .filter(s => s.startDate.getTime() !== CURRENT.startDate.getTime())
-  .concat([CURRENT]);
-const NOW = new Date();
-ALL.forEach(s => {
-  s.status = s.startDate < NOW ? "done" : "upcoming";
-  s.isThis = s.isCurrent && s.status === "upcoming";
+const ALL = EVENTS.map(normalise).filter(s => {
+  if (isNaN(s.startDate)) { console.warn('[LSD] Event "' + s.title + '" has an unreadable start "' + s.start + '". Use "YYYY-MM-DD HH:MM".'); return false; }
+  return true;
 });
+/* A session is done once it has ended; until then it is upcoming (also while it runs). */
+ALL.forEach(s => { s.status = s.endDate <= NOW ? "done" : "upcoming"; });
 const DONE = ALL.filter(s => s.status === "done").sort((a, b) => b.startDate - a.startDate);
 const UPCOMING = ALL.filter(s => s.status === "upcoming").sort((a, b) => a.startDate - b.startDate);
+/* Featured = the nearest session that has not ended yet (null if none). */
+const FEATURED = UPCOMING[0] || null;
+ALL.forEach(s => { s.isThis = s === FEATURED; });
 
 function calUrl(s) {
   const end = new Date(s.startDate.getTime() + s.duration * 60000);
   return "https://calendar.google.com/calendar/render?action=TEMPLATE" +
-    "&text=" + encodeURIComponent(LAB.series + ": " + s.title) +
+    "&text=" + encodeURIComponent(SITE.series + ": " + s.title) +
     "&dates=" + gcalStamp(s.startDate) + "/" + gcalStamp(end) +
     "&details=" + encodeURIComponent((s.topic || "") + "\n\nLeading: " + s.speaker.name + "\nIkeuchi Lab · English · Bring your lunch.") +
-    "&location=" + encodeURIComponent(SEMINAR.location);
+    "&location=" + encodeURIComponent(s.location);
 }
 function statusBadge(s) {
   if (s.isThis) return '<span class="badge badge-thisweek">This week</span>';
@@ -230,39 +231,50 @@ function setupReveal() {
 
 /* ---------- 5. Fill the page ---------- */
 safe("hero + this week", () => {
-  const sd = CURRENT.startDate;
   const meta = $("heroMeta");
-  if (meta) meta.innerHTML = [["When", fmtDate(sd)], ["Time", fmtTime(sd)], ["Length", SEMINAR.duration + " min"],
-    ["Room", SEMINAR.location], ["Language", LAB.language]]
-    .map(kv => '<div><dt class="kicker">' + esc(kv[0]) + "</dt><dd>" + esc(kv[1]) + "</dd></div>").join("");
+  const calIds = ["calBtn", "calBtnSp"];
+  const f = FEATURED;
+  if (!f) {
+    /* Nothing scheduled: say so, hide the calendar buttons, leave the rest of the page as it is. */
+    if (meta) meta.innerHTML = '<div><dt class="kicker">Next session</dt><dd>To be announced</dd></div>';
+    calIds.forEach(id => { const a = $(id); if (a) a.style.display = "none"; });
+    setText("weekTitle", "Next session: to be announced");
+    const sc = document.querySelector("#this-week .speaker-card");
+    if (sc && sc.parentNode) sc.parentNode.style.display = "none";
+  } else {
+    const sd = f.startDate;
+    if (meta) meta.innerHTML = [["When", fmtDate(sd)], ["Time", fmtTime(sd)], ["Length", f.duration + " min"],
+      ["Room", f.location], ["Language", SITE.language]]
+      .map(kv => '<div><dt class="kicker">' + esc(kv[0]) + "</dt><dd>" + esc(kv[1]) + "</dd></div>").join("");
+    calIds.forEach(id => { const a = $(id); if (a) a.href = calUrl(f); });
+    setText("weekTitle", f.title);
 
-  ["calBtn", "calBtnSp"].forEach(id => { const a = $(id); if (a) a.href = calUrl(CURRENT); });
-  setText("ruleLen", SEMINAR.duration + " minutes");
-  setText("weekTitle", SEMINAR.title);
+    const topic = $("weekTopic");
+    if (topic) topic.innerHTML = String(f.topic).split(/\n\s*\n/).filter(Boolean)
+      .map(p => '<p style="margin-bottom:12px">' + esc(p) + "</p>").join("");
 
-  const topic = $("weekTopic");
-  if (topic) topic.innerHTML = String(SEMINAR.topic).split(/\n\s*\n/)
-    .map(p => '<p style="margin-bottom:12px">' + esc(p) + "</p>").join("");
+    const tk = $("takeaways");
+    if (tk) tk.innerHTML = f.takeaways.map((t, i) =>
+      '<div class="takeaway-row"><span class="takeaway-num">' + String(i + 1).padStart(2, "0") + '</span>' +
+      '<span style="font-size:14px;line-height:1.6">' + esc(t) + "</span></div>").join("");
 
-  const tk = $("takeaways");
-  if (tk) tk.innerHTML = (SEMINAR.takeaways || []).map(t =>
-    '<div class="takeaway-row"><span class="takeaway-num">' + esc(t.num) + '</span>' +
-    '<span style="font-size:14px;line-height:1.6">' + esc(t.text) + "</span></div>").join("");
+    setText("spName", f.speaker.name);
+    setText("spRole", f.speaker.role);
+    setText("spAff", f.speaker.affiliation);
+    setText("spBio", f.speaker.bio);
+    const ph = $("speakerPhoto");
+    if (ph) { ph.innerHTML = photoHTML(f); hydratePhotos(ph); }
+  }
 
-  setText("spName", CURRENT.speaker.name);
-  setText("spRole", CURRENT.speaker.role);
-  setText("spAff", CURRENT.speaker.affiliation);
-  setText("spBio", CURRENT.speaker.bio);
-  const ph = $("speakerPhoto");
-  if (ph) { ph.innerHTML = photoHTML(CURRENT); hydratePhotos(ph); }
-
-  setText("footerEmail", SEMINAR.contact);
-  const fc = $("footerContact"); if (fc) fc.href = "mailto:" + SEMINAR.contact;
+  setText("footerEmail", SITE.contact);
+  const fc = $("footerContact"); if (fc) fc.href = "mailto:" + SITE.contact;
   setText("footerYear", new Date().getFullYear());
 });
 
 safe("metrics", () => {
-  const speakers = new Set(ALL.map(s => nameKeys(s.speaker.name).loose));
+  /* Calculated, never typed in: held = finished, planned = upcoming,
+     speakers = different people who have given a finished session. */
+  const speakers = new Set(DONE.map(s => nameKeys(s.speaker.name).exact));
   metricData["m-done"] = DONE.length;
   metricData["m-upcoming"] = UPCOMING.length;
   metricData["m-speakers"] = speakers.size;
@@ -272,7 +284,7 @@ safe("metrics", () => {
 safe("faq", () => {
   const list = $("faqList");
   if (!list) return;
-  list.innerHTML = (SEMINAR.faq || []).map((f, i) => {
+  list.innerHTML = (SITE.faq || []).map((f, i) => {
     const open = i === 0;
     return '<div class="faq-item' + (open ? " open" : "") + '">' +
       '<button type="button" class="faq-btn" id="faq-q-' + i + '" aria-expanded="' + open + '" aria-controls="faq-a-' + i + '">' +
@@ -293,38 +305,59 @@ safe("faq", () => {
 });
 
 /* ---------- 7. "Save my seat" ---------- */
+/* The band signs people up for the featured session, unless "Save my seat" in a
+   pop-up switched it to another upcoming session (then it names that session). */
+let rsvpTarget = FEATURED;
+function setRsvpTarget(s, announce) {
+  rsvpTarget = s || FEATURED;
+  const line = $("rsvpFor");
+  if (line) {
+    line.style.display = announce && rsvpTarget ? "block" : "none";
+    line.textContent = rsvpTarget ? "For: " + rsvpTarget.title + " · " + fmtDate(rsvpTarget.startDate) + " · " + fmtTime(rsvpTarget.startDate) : "";
+  }
+  const status = $("rsvpStatus"); if (status) status.textContent = "";
+  const after = $("calAfter"); if (after) after.style.display = "none";
+}
 safe("rsvp", () => {
   const form = $("rsvpForm");
   if (!form) return;
+  /* Any other "Save my seat" link (hero, nav, speaker card) goes back to the featured session. */
+  document.addEventListener("click", e => {
+    const a = e.target.closest ? e.target.closest('a[href="#join"]') : null;
+    if (a && !a.hasAttribute("data-rsvp")) setRsvpTarget(FEATURED, false);
+  });
   form.addEventListener("submit", e => {
     e.preventDefault();
     const input = $("nameInput");
     const name = input ? input.value.trim() : "";
     const status = $("rsvpStatus");
+    const s = rsvpTarget;
+    if (!s) { if (status) status.textContent = "No session is open for sign-up yet."; return; }
     if (!name) { if (status) status.textContent = "Please type your name first."; return; }
 
-    if (SEMINAR.formUrl) {
+    if (SITE.formUrl) {
       /* Send name + session context so every spreadsheet row is self-contained. */
       const body = new URLSearchParams();
       body.append("name",  name);
-      body.append("title", SEMINAR.title);
-      body.append("date",  fmtDate(CURRENT.startDate) + " " + fmtTime(CURRENT.startDate));
-      fetch(SEMINAR.formUrl, { method: "POST", mode: "no-cors", body: body }).catch(() => {});
+      body.append("title", s.title);
+      body.append("date",  fmtDate(s.startDate) + " " + fmtTime(s.startDate));
+      fetch(SITE.formUrl, { method: "POST", mode: "no-cors", body: body }).catch(() => {});
     }
     if (status) status.textContent = "Thanks, " + name + ". You're on the list.";
     const after = $("calAfter"); if (after) after.style.display = "block";
-    const cal2 = $("calBtn2"); if (cal2) cal2.href = calUrl(CURRENT);
+    const cal2 = $("calBtn2"); if (cal2) cal2.href = calUrl(s);
     if (input) input.value = "";
   });
 });
 
 /* ---------- 8. Detail pop-up ---------- */
-let lastFocus = null;
+let lastFocus = null, modalSession = null;
 const modal = $("modal");
 function openModal(s) {
   if (!modal) return;
   const done = s.status === "done";
   lastFocus = document.activeElement;
+  modalSession = s;
   const img = $("mImg"); if (img) { img.innerHTML = photoHTML(s); hydratePhotos(img); }
   const badge = $("mBadge");
   if (badge) {
@@ -338,28 +371,43 @@ function openModal(s) {
   let actions = "";
   if (done && s.link) actions += '<a href="' + esc(s.link) + '" target="_blank" rel="noopener" class="btn btn-cyan">Open notes</a>';
   if (!done) {
-    actions += '<a href="' + esc(calUrl(s)) + '" target="_blank" rel="noopener" class="btn btn-cyan">Add to Calendar</a>';
-    actions += '<a href="#join" data-close class="btn btn-ghost">Save my seat</a>';
+    actions += '<a href="' + esc(calUrl(s)) + '" target="_blank" rel="noopener" class="btn btn-cyan">Add to Google Calendar</a>';
+    actions += '<a href="#join" data-rsvp class="btn btn-ghost">Save my seat</a>';
   }
   const act = $("mActions"); if (act) act.innerHTML = actions;
   modal.classList.add("open");
   document.body.style.overflow = "hidden";
   const close = $("mClose"); if (close) close.focus();
 }
-function closeModal() {
+function closeModal(keepFocus) {
   if (!modal) return;
   modal.classList.remove("open");
   document.body.style.overflow = "";
-  if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+  if (!keepFocus && lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
 }
 safe("modal", () => {
   if (!modal) return;
   on("mClose", "click", closeModal);
-  modal.addEventListener("click", e => { if (e.target === modal || e.target.hasAttribute("data-close")) closeModal(); });
+  modal.addEventListener("click", e => {
+    const rsvp = e.target.closest ? e.target.closest("[data-rsvp]") : null;
+    if (rsvp) {
+      /* "Save my seat" in a pop-up: switch the band to this session and go there. */
+      e.preventDefault();
+      closeModal(true);
+      setRsvpTarget(modalSession, true);
+      const band = $("join");
+      if (band) band.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
+      const input = $("nameInput");
+      if (input) { try { input.focus({ preventScroll: true }); } catch (err) {} }
+      return;
+    }
+    if (e.target === modal || e.target.hasAttribute("data-close")) closeModal();
+  });
   document.addEventListener("keydown", e => { if (e.key === "Escape" && modal.classList.contains("open")) closeModal(); });
 });
 
 /* ---------- 9. Previous sessions: stacked carousel ---------- */
+const EMPTY_PAST = "(Upcoming) — past sessions will appear here";
 let active = 0;
 function renderStack() {
   const stack = $("stack");
@@ -367,7 +415,14 @@ function renderStack() {
   stack.innerHTML = "";
   const n = DONE.length, prev = $("prevBtn"), next = $("nextBtn");
   if (!n) {
-    stack.innerHTML = '<div style="display:flex;height:100%;align-items:center;justify-content:center;color:var(--muted);font-size:14px">No sessions held yet.</div>';
+    /* No finished sessions yet: one placeholder card in the same style. */
+    stack.innerHTML =
+      '<div class="stack-card" role="note" style="transform:translate(-50%,-50%);cursor:default">' +
+        '<span style="width:100%;height:100%;background:var(--surface);border:1px solid var(--purple);padding:10px;display:flex;flex-direction:column;box-shadow:0 0 40px -6px rgba(155,81,224,.5)">' +
+          '<span style="flex:1;display:grid;place-items:center;min-height:0;background:linear-gradient(135deg,rgba(155,81,224,.2),rgba(0,242,254,.1))">' +
+            '<svg class="ico" aria-hidden="true" style="width:48px;height:48px;color:var(--muted);opacity:.6"><use href="#i-brain"/></svg></span>' +
+          '<span style="display:block;text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding-top:8px;letter-spacing:.08em">' +
+            esc(EMPTY_PAST) + "</span></span></div>";
     if (prev) prev.style.display = "none"; if (next) next.style.display = "none";
     return;
   }
@@ -391,7 +446,7 @@ function renderStack() {
       '<span style="width:100%;height:100%;background:var(--surface);border:1px solid var(--purple);padding:10px;display:flex;flex-direction:column;box-shadow:0 0 40px -6px rgba(155,81,224,.5)">' +
         '<span style="flex:1;position:relative;overflow:hidden;min-height:0;display:block">' + photoHTML(s) + "</span>" +
         '<span style="display:block;text-align:center;font-size:11px;font-weight:800;color:var(--muted);padding-top:8px;letter-spacing:.08em">' +
-          esc(LAB.short) + " · " + esc(yearOf(s.startDate)) + "</span></span>";
+          esc(SITE.short) + " · " + esc(yearOf(s.startDate)) + "</span></span>";
     card.addEventListener("click", () => { if (off === 0) openModal(s); else { active = i; renderStack(); } });
     stack.appendChild(card);
   });
@@ -414,6 +469,8 @@ function renderGrid() {
   let list = activeFilter === "done" ? DONE : activeFilter === "upcoming" ? UPCOMING : UPCOMING.concat(DONE);
   list = list.filter(s => !q || (s.title + " " + (s.topic || "") + " " + s.speaker.name).toLowerCase().indexOf(q) !== -1);
   shownList = list;
+  /* No finished sessions yet: the "All" and "Done" lists end with one placeholder card. */
+  const showPastPlaceholder = !DONE.length && !q && activeFilter !== "upcoming";
   grid.innerHTML = list.map((s, i) =>
     '<div class="arch-card' + (s.isThis ? " is-thisweek" : "") + '" role="button" tabindex="0" data-i="' + i + '" aria-label="Open: ' + esc(s.title) + '">' +
       '<div class="arch-card-img">' + photoHTML(s) + "</div>" +
@@ -422,14 +479,19 @@ function renderGrid() {
           '<span style="font-size:12px;color:var(--cyan)">' + esc(fmtDate(s.startDate)) + "</span>" + statusBadge(s) + "</div>" +
         '<div class="arch-card-title">' + esc(s.title) + "</div>" +
         '<div class="arch-card-speaker">' + esc(s.speaker.name) + "</div>" +
-      "</div></div>").join("");
+      "</div></div>").join("") + (showPastPlaceholder ? emptyPastCard() : "");
   hydratePhotos(grid);
   const empty = $("archEmpty");
   if (empty) {
-    empty.style.display = list.length ? "none" : "block";
+    empty.style.display = list.length || showPastPlaceholder ? "none" : "block";
     empty.textContent = q ? "No sessions match your search."
       : activeFilter === "upcoming" ? "No upcoming sessions scheduled yet." : "No sessions in this list yet.";
   }
+}
+function emptyPastCard() {
+  return '<div class="arch-card" role="note" style="cursor:default">' +
+    '<div class="arch-card-img"><svg class="ico" aria-hidden="true" style="width:40px;height:40px;color:var(--muted);opacity:.6"><use href="#i-brain"/></svg></div>' +
+    '<div class="arch-card-body"><div class="arch-card-title" style="color:var(--muted)">' + esc(EMPTY_PAST) + "</div></div></div>";
 }
 safe("archive grid", () => {
   const grid = $("archGrid");

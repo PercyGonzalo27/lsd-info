@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=3">
+<link rel="stylesheet" href="styles.css?v=4">
 </head>
 <body>
 
@@ -264,6 +264,8 @@
       <p style="font-size:15px;color:rgba(11,15,25,.65);max-width:360px">
         Type your name and confirm. Takes two seconds.
       </p>
+      <!-- Filled by app.js when "Save my seat" in a pop-up picks a specific session; hidden otherwise -->
+      <p id="rsvpFor" role="status" style="display:none;margin-top:14px;max-width:420px;font:700 12px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:.06em;text-transform:uppercase;color:var(--bg)"></p>
     </div>
     <div>
       <form id="rsvpForm" autocomplete="off">
@@ -404,8 +406,8 @@
 </div>
 
 <!-- config.js = what you edit each week.  app.js = page logic (do not edit). Order matters. -->
-<script src="config.js"></script>
-<script src="app.js?v=3"></script>
-<script src="backdrop.js?v=3"></script>
+<script src="config.js?v=4"></script>
+<script src="app.js?v=4"></script>
+<script src="backdrop.js?v=4"></script>
 </body>
 </html>
