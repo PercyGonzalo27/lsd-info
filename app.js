@@ -385,7 +385,8 @@ function renderStack() {
     card.setAttribute("aria-label", "Open: " + s.title);
     card.style.transform = "translate(calc(-50% + " + (off * gap) + "px),-50%) rotate(" + (off * 5) + "deg) scale(" + (1 - Math.abs(off) * 0.1) + ")";
     card.style.zIndex = 10 - Math.abs(off);
-    card.style.opacity = Math.abs(off) === 2 ? 0.4 : 1;
+    /* side cards dimmed so the centre card (and the arrows) stand out */
+    card.style.opacity = Math.abs(off) === 2 ? 0.3 : Math.abs(off) === 1 ? 0.6 : 1;
     card.innerHTML =
       '<span style="width:100%;height:100%;background:var(--surface);border:1px solid var(--purple);padding:10px;display:flex;flex-direction:column;box-shadow:0 0 40px -6px rgba(155,81,224,.5)">' +
         '<span style="flex:1;position:relative;overflow:hidden;min-height:0;display:block">' + photoHTML(s) + "</span>" +
@@ -423,7 +424,12 @@ function renderGrid() {
         '<div class="arch-card-speaker">' + esc(s.speaker.name) + "</div>" +
       "</div></div>").join("");
   hydratePhotos(grid);
-  const empty = $("archEmpty"); if (empty) empty.style.display = list.length ? "none" : "block";
+  const empty = $("archEmpty");
+  if (empty) {
+    empty.style.display = list.length ? "none" : "block";
+    empty.textContent = q ? "No sessions match your search."
+      : activeFilter === "upcoming" ? "No upcoming sessions scheduled yet." : "No sessions in this list yet.";
+  }
 }
 safe("archive grid", () => {
   const grid = $("archGrid");

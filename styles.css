@@ -381,6 +381,12 @@ html.js [data-stagger].is-in>*{opacity:1;transform:none}
   .footer-inner{flex-direction:row;align-items:center;justify-content:space-between}
 }
 @media(min-width:720px){ .rules-grid{grid-template-columns:repeat(3,1fr)} }
+/* Tablet: speaker photo beside the details instead of a tall full-width photo; hero centred */
+@media(min-width:600px) and (max-width:1079px){
+  .hero{align-items:center}
+  .speaker-card{display:grid;grid-template-columns:minmax(220px,40%) 1fr}
+  .speaker-photo{aspect-ratio:auto;height:100%;min-height:280px;max-height:none}
+}
 
 /* ═══ DESKTOP ≥ 900 px ══════════════════════════════════ */
 @media(min-width:900px){
