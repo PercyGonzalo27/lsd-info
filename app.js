@@ -457,6 +457,19 @@ safe("nav", () => {
   window.addEventListener("scroll", () => {
     nav.classList.toggle("is-scrolled", window.scrollY > 10);   // colours in styles.css
   }, { passive: true });
+
+  /* Highlight the nav link of the section in the middle of the screen. */
+  const links = Array.prototype.slice.call(document.querySelectorAll('.nav-tray a[href^="#"]'));
+  if (!links.length || !("IntersectionObserver" in window)) return;
+  const byId = {};
+  links.forEach(a => { byId[a.getAttribute("href").slice(1)] = a; });
+  const setActive = id => links.forEach(a => {
+    if (a === byId[id]) a.setAttribute("aria-current", "location"); else a.removeAttribute("aria-current");
+  });
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) setActive(en.target.id); });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  Object.keys(byId).concat(["hero-top"]).forEach(id => { const s = $(id); if (s) spy.observe(s); });
 });
 
 /* ---------- Go ---------- */

@@ -45,7 +45,7 @@
 html{scroll-behavior:smooth;scroll-padding-top:64px;-webkit-text-size-adjust:100%;text-size-adjust:100%;
   -webkit-font-smoothing:antialiased;overflow-x:hidden;background:var(--bg-edge)}
 body{font-family:'Archivo',sans-serif;background:transparent;color:var(--text);
-  font-size:15px;line-height:1.6;padding-bottom:var(--sab);overflow-x:hidden}
+  font-size:15px;line-height:1.6;padding-bottom:var(--sab)}   /* no overflow here: it would break the sticky nav */
 button,input{font:inherit;color:inherit}
 input{-webkit-appearance:none;appearance:none}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
@@ -75,7 +75,6 @@ h1,h2,h3,h4{font-weight:800;line-height:1.05;letter-spacing:-.01em}
   filter:drop-shadow(0 0 22px rgba(var(--cyan-rgb),.18))}
 .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:600}
 .kicker-cyan{color:var(--cyan)}
-.kicker-cyan::before{content:"CH01 · _";opacity:.7}
 
 /* HUD section label:  ── CH02 · _WHAT_IS_LSD  /\/\_  */
 .hud-head{display:flex;align-items:center;gap:12px;margin-bottom:16px}
@@ -91,7 +90,7 @@ h1,h2,h3,h4{font-weight:800;line-height:1.05;letter-spacing:-.01em}
 .sec-title{font-size:clamp(26px,6vw,38px)}
 
 /* ── Sections ──────────────────────────────────────────── */
-.section{padding:48px var(--gut)}
+.section{padding:48px var(--gut);overflow:hidden}   /* clips carousel & slide-in spill (iOS ignores html overflow-x) */
 .section--dark{background:transparent}
 .section--surface{background:linear-gradient(180deg,rgba(var(--surface-rgb),0),rgba(var(--surface-rgb),.35) 18%,rgba(var(--surface-rgb),.35) 82%,rgba(var(--surface-rgb),0))}
 hr.div,hr.div--inset{border:none;height:1px;margin:0 var(--gut);
@@ -115,10 +114,23 @@ hr.div,hr.div--inset{border:none;height:1px;margin:0 var(--gut);
 .nav-sep{width:1px;height:14px;background:var(--div2);flex-shrink:0}
 .nav-sub{font:600 10px var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.nav-links{display:none;align-items:center;gap:26px}
-.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;transition:color .2s;min-height:44px;display:inline-flex;align-items:center}
-.nav-links a:hover{color:var(--text)}
+.nav-links{display:none;align-items:center;gap:14px}
 .nav-links a.btn{color:var(--bg);min-height:40px;padding:10px 18px}   /* CTA keeps dark text on cyan */
+/* Section links: glass tray of HUD "channels", same look as the archive filter tray.
+   Channel numbers match the section labels (CH01–CH04). Active link set by app.js. */
+.nav-tray{display:flex;align-items:center;gap:2px;padding:4px;border-radius:999px;
+  background:var(--glass);border:1px solid var(--glass-border)}
+.nav-tray a{position:relative;display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 14px;
+  border-radius:999px;font:600 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);text-decoration:none;white-space:nowrap;transition:color .2s,background .2s,box-shadow .2s}
+.nav-ch{font-size:10px;letter-spacing:.04em;color:rgba(var(--cyan-rgb),.55);transition:color .2s}   /* ≈4.7:1 */
+.nav-tray a:hover{color:var(--text);background:rgba(var(--text-rgb),.05)}
+.nav-tray a[aria-current]{color:var(--cyan);background:rgba(var(--cyan-rgb),.1);
+  box-shadow:inset 0 0 0 1px rgba(var(--cyan-rgb),.35)}
+.nav-tray a[aria-current] .nav-ch{color:var(--cyan)}
+/* "live channel" dot under the active link */
+.nav-tray a[aria-current]::after{content:"";position:absolute;left:50%;bottom:-3px;width:4px;height:4px;margin-left:-2px;
+  border-radius:50%;background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
 #nav-mob-btn{display:inline-flex;min-height:40px;padding:10px 16px;font-size:13px}
 
 /* ── Buttons ───────────────────────────────────────────── */

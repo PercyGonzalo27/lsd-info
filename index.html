@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=2">
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
@@ -107,10 +107,13 @@
     <span class="nav-sub">LSD</span>
   </div>
   <nav class="nav-links" aria-label="Main">
-    <a href="#rules">Rules</a>
-    <a href="#this-week">This week</a>
-    <a href="#archive">Archive</a>
-    <a href="#faq">FAQ</a>
+    <!-- Same order and channel numbers as the section labels (CH01–CH04) -->
+    <div class="nav-tray">
+      <a href="#this-week"><span class="nav-ch" aria-hidden="true">01</span>This week</a>
+      <a href="#rules"><span class="nav-ch" aria-hidden="true">02</span>What is LSD</a>
+      <a href="#archive"><span class="nav-ch" aria-hidden="true">03</span>Archive</a>
+      <a href="#faq"><span class="nav-ch" aria-hidden="true">04</span>FAQ</a>
+    </div>
     <a href="#join" class="btn btn-cyan">Save my seat</a>
   </nav>
   <a href="#join" class="btn btn-cyan" id="nav-mob-btn" aria-label="Save my seat">Save my seat</a>
@@ -226,7 +229,7 @@
 <section id="this-week" class="section section--surface">
   <div class="week-grid">
     <div data-reveal="left">
-      <span class="kicker kicker-cyan" style="display:block;margin-bottom:14px">This week</span>
+      <div class="hud-head"><span class="draw-rule"></span><span class="hud-label">CH01 · _THIS_WEEK</span></div>
       <h2 id="weekTitle" style="font-size:clamp(24px,5.5vw,34px);margin-bottom:18px"></h2>
       <div id="weekTopic" style="font-size:15px;line-height:1.7;color:var(--muted)"></div>
       <div class="week-takeaways" id="takeaways"></div>
@@ -281,7 +284,7 @@
 <!-- 4. WHAT IS LSD? -->
 <section id="rules" class="section section--dark" data-reveal>
   <div style="margin-bottom:28px">
-    <div class="hud-head"><span class="draw-rule"></span><span class="hud-label" aria-hidden="true">CH02 · _PROTOCOL</span></div>
+    <div class="hud-head"><span class="draw-rule"></span><span class="hud-label" aria-hidden="true">CH02 · _WHAT_IS_LSD</span></div>
     <h2 class="sec-title">What is LSD?</h2>
   </div>
   <div class="rules-grid" data-stagger>
@@ -402,7 +405,7 @@
 
 <!-- config.js = what you edit each week.  app.js = page logic (do not edit). Order matters. -->
 <script src="config.js"></script>
-<script src="app.js?v=2"></script>
-<script src="backdrop.js?v=2"></script>
+<script src="app.js?v=3"></script>
+<script src="backdrop.js?v=3"></script>
 </body>
 </html>
